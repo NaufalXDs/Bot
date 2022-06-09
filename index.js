@@ -8,9 +8,33 @@ const client = new Discord.Client({
   intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"],
 });
 
-client.on("ready", () => {
-  console.log(`ready The bot ${client.user.tag}`);
-});
+let bot = { client, prefix: "d!", own: ["718259600117465158"] };
+
+const commands = new Discord.Collection();
+const events = new Discord.Collection();
+
+module.exports = bot;
+
+const loadEvents = require("./handlers/events");
+const loadCommands = require("./handlers/commands");
+const { existsSync } = require("fs");
+const { resolve } = require("path");
+
+if (existsSync(resolve("./.env"))) {
+  require("dotenv").config();
+}
+
+const init = async () => {
+  await loadCommands(client);
+  loadEvents(client);
+  client.login(process.env.TOKEN);
+};
+
+module.exports = bot;
+
+// client.on("ready", () => {
+//   console.log(`ready The bot ${client.user.tag}`);
+// });
 
 client.on("messageCreate", (message) => {
   if (message.content == "lol") {
